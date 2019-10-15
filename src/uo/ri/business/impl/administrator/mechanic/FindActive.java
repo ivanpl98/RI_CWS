@@ -9,9 +9,9 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
-public class ListMechanics {
+public class FindActive {
 
-    public ListMechanics() {
+    public FindActive() {
 
     }
 
@@ -20,12 +20,11 @@ public class ListMechanics {
         try {
             conn = Jdbc.getConnection();
             MechanicGateway mg = PersistenceFactory.getMechanicGateway(conn);
-            return mg.findAll();
+            return mg.findActiveMechanics();
         } catch (SQLException sqle) {
             throw new RuntimeException(sqle);
         } finally {
             Jdbc.close(conn);
         }
     }
-
 }

@@ -22,11 +22,18 @@ public class AddMechanic {
         Connection conn = null;
         try {
             conn = Jdbc.getConnection();
+            conn.setAutoCommit(false);
             MechanicGateway mg = PersistenceFactory.getMechanicGateway(conn);
-            if (mg.existsDni(this.mechanic.dni))
+            if (mg.findByDni(this.mechanic) != null)
                 throw new BusinessException("The dni: " + this.mechanic.dni + " already exists in the database");
-            mg.addMechanic(this.mechanic);
+            mg.add(this.mechanic);
+            conn.commit();
         } catch (SQLException sqle) {
+            try {
+                conn.rollback();
+            } catch (SQLException e) {
+                throw new RuntimeException(sqle);
+            }
             throw new RuntimeException(sqle);
         } finally {
             Jdbc.close(conn);

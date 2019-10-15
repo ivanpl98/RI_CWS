@@ -22,11 +22,24 @@ public class DeleteMechanic {
         Connection conn = null;
         try {
             conn = Jdbc.getConnection();
+            conn.setAutoCommit(false);
             MechanicGateway mg = PersistenceFactory.getMechanicGateway(conn);
-            if (!mg.existsId(this.id))
+            if (mg.findById(this.id) == null) {
+                conn.rollback();
                 throw new BusinessException("The id: " + this.id + " does not exists in the database");
-            mg.deleteMechanic(this.id);
+            }
+            if (!mg.isDeletable(this.id)){
+                conn.rollback();
+                throw new BusinessException("The id: " + this.id + " cannot be deleted from the database");
+            }
+            mg.delete(this.id);
+            conn.commit();
         } catch (SQLException sqle) {
+            try {
+                conn.rollback();
+            } catch (SQLException e) {
+                throw new RuntimeException(sqle);
+            }
             throw new RuntimeException(sqle);
         } finally {
             Jdbc.close(conn);

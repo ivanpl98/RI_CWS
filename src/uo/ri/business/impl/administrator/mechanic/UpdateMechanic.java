@@ -21,11 +21,18 @@ public class UpdateMechanic {
         Connection conn = null;
         try {
             conn = Jdbc.getConnection();
+            conn.setAutoCommit(false);
             MechanicGateway mg = PersistenceFactory.getMechanicGateway(conn);
-            if (!mg.existsId(this.mechanic.id))
+            if (mg.findById(this.mechanic.id) == null)
                 throw new BusinessException("The id: " + this.mechanic.id + " does not exists in the database");
-            mg.updateMechanic(this.mechanic);
+            mg.update(this.mechanic);
+            conn.commit();
         } catch (SQLException sqle) {
+            try {
+                conn.rollback();
+            } catch (SQLException e) {
+                throw new RuntimeException(sqle);
+            }
             throw new RuntimeException(sqle);
         } finally {
             Jdbc.close(conn);
