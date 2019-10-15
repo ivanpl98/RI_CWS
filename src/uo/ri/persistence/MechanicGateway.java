@@ -70,131 +70,100 @@ public class MechanicGateway extends AbstractGateway implements Gateway<Mechanic
     }
 
     @Override
-    public List<MechanicDto> findAll() {
+    public List<MechanicDto> findAll() throws SQLException {
         PreparedStatement pst = null;
         ResultSet rs = null;
         List<MechanicDto> mechanics = null;
 
-        try {
-            pst = this.conn.prepareStatement(Conf.getInstance().getProperty("SQL_LIST_MECHANICS"));
-            mechanics = resultSetToList(pst.executeQuery());
+        pst = this.conn.prepareStatement(Conf.getInstance().getProperty("SQL_LIST_MECHANICS"));
+        mechanics = resultSetToList(pst.executeQuery());
 
-        } catch (SQLException sqle) {
+        Jdbc.close(rs, pst);
 
-            throw new RuntimeException(sqle);
-
-        } finally {
-
-            Jdbc.close(rs, pst);
-
-        }
 
         return mechanics;
     }
 
-    public MechanicDto findById(Long id) {
+    public MechanicDto findById(Long id) throws SQLException {
         PreparedStatement pst = null;
         ResultSet rs = null;
         MechanicDto mechanic = null;
 
-        try {
-            pst = this.conn.prepareStatement(Conf.getInstance().getProperty("SQL_FIND_MECHANIC_ID"));
+        pst = this.conn.prepareStatement(Conf.getInstance().getProperty("SQL_FIND_MECHANIC_ID"));
 
-            rs = pst.executeQuery();
+        rs = pst.executeQuery();
 
-            while (rs.next()) {
-                MechanicDto mec = resultSetToMechanic(rs);
-            }
-
-        } catch (SQLException sqle) {
-
-            throw new RuntimeException(sqle);
-
-        } finally {
-
-            Jdbc.close(rs, pst);
-
+        while (rs.next()) {
+            MechanicDto mec = resultSetToMechanic(rs);
         }
+
+        Jdbc.close(rs, pst);
 
         return mechanic;
 
     }
 
-    public MechanicDto findByDni(MechanicDto mec) {
+    public MechanicDto findByDni(MechanicDto mec) throws SQLException {
         PreparedStatement pst = null;
         ResultSet rs = null;
         MechanicDto mechanic = null;
 
-        try {
-            pst = this.conn.prepareStatement(Conf.getInstance().getProperty("SQL_FIND_MECHANIC_DNI"));
+        pst = this.conn.prepareStatement(Conf.getInstance().getProperty("SQL_FIND_MECHANIC_DNI"));
 
-            pst.setString(1, mec.dni);
+        pst.setString(1, mec.dni);
 
-            rs = pst.executeQuery();
+        rs = pst.executeQuery();
 
-            while (rs.next()) {
-                MechanicDto m = resultSetToMechanic(rs);
-            }
-
-        } catch (SQLException sqle) {
-
-            throw new RuntimeException(sqle);
-
-        } finally {
-
-            Jdbc.close(rs, pst);
-
+        while (rs.next()) {
+            MechanicDto m = resultSetToMechanic(rs);
         }
+
+        Jdbc.close(rs, pst);
 
         return mechanic;
 
     }
 
-    public List<MechanicDto> findActiveMechanics() {
-        PreparedStatement pst = null;
-        ResultSet rs = null;
-        List<MechanicDto> mechanics = null;
+    /**
+     public List<MechanicDto> findActiveMechanics() throws SQLException {
+     PreparedStatement pst = null;
+     ResultSet rs = null;
+     List<MechanicDto> mechanics = null;
 
-        try {
-            pst = this.conn.prepareStatement(Conf.getInstance().getProperty("SQL_LIST_ACTIVE_MECHANICS"));
-            mechanics = resultSetToList(pst.executeQuery());
+     pst = this.conn.prepareStatement(Conf.getInstance().getProperty("SQL_LIST_ACTIVE_MECHANICS"));
+     mechanics = resultSetToList(pst.executeQuery());
 
-        } catch (SQLException sqle) {
+     Jdbc.close(rs, pst);
 
-            throw new RuntimeException(sqle);
+     return mechanics;
+     }
+     */
 
-        } finally {
-
-            Jdbc.close(rs, pst);
-
-        }
-
-        return mechanics;
-    }
-
-    public boolean isDeletable(Long id) {
-        PreparedStatement pst = null;
-        ResultSet rs = null;
-
-        try {
-            pst = this.conn.prepareStatement(Conf.getInstance().getProperty("SQL_IS_MECHANIC_DELETABLE"));
-            pst.setLong(1, id);
-
-            rs = pst.executeQuery();
-            while (rs.next()) {
-                if (rs.getInt("c") != 0)
-                    return false;
-
-            }
-
-        } catch (SQLException sqle) {
-            throw new RuntimeException(sqle);
-        } finally {
-            Jdbc.close(rs, pst);
-        }
-
-        return true;
-    }
+    /**
+     * public boolean isDeletable(Long id) {
+     * PreparedStatement pst = null;
+     * ResultSet rs = null;
+     * <p>
+     * try {
+     * pst = this.conn.prepareStatement(Conf.getInstance().getProperty("SQL_IS_MECHANIC_DELETABLE"));
+     * pst.setLong(1, id);
+     * <p>
+     * rs = pst.executeQuery();
+     * while (rs.next()) {
+     * if (rs.getInt("c") != 0)
+     * return false;
+     * <p>
+     * }
+     * <p>
+     * } catch (SQLException sqle) {
+     * throw new RuntimeException(sqle);
+     * } finally {
+     * Jdbc.close(rs, pst);
+     * }
+     * <p>
+     * return true;
+     * }
+     */
 
     private List<MechanicDto> resultSetToList(ResultSet rs) throws SQLException {
         List<MechanicDto> mechanics = new ArrayList<MechanicDto>();
