@@ -11,5 +11,5 @@ public interface Gateway<T> {
 
     void update(T obj) throws SQLException;
 
-    List<T> findAll();
+    List<T> findAll() throws SQLException;
 }

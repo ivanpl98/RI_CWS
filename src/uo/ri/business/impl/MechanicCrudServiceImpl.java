@@ -38,9 +38,4 @@ public class MechanicCrudServiceImpl implements MechanicCrudService {
         return lm.execute();
     }
 
-    @Override
-    public List<MechanicDto> findActiveMechanics() throws BusinessException {
-        FindActive fa = new FindActive();
-        return fa.execute();
-    }
 }

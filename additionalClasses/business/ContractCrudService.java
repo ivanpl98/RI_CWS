@@ -3,7 +3,6 @@ package uo.ri.business;
 import java.util.Date;
 import java.util.List;
 
-import uo.ri.business.dto.ContractDto;
 import uo.ri.business.exception.BusinessException;
 
 public interface ContractCrudService {
