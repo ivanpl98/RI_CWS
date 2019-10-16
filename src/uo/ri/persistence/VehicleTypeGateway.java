@@ -4,6 +4,7 @@ import alb.util.jdbc.Jdbc;
 import uo.ri.business.dto.VehicleTypeDto;
 import uo.ri.common.Conf;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -11,6 +12,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class VehicleTypeGateway extends AbstractGateway implements Gateway<VehicleTypeDto> {
+
+    public VehicleTypeGateway(Connection conn) {
+        super(conn);
+    }
+
     @Override
     public void add(VehicleTypeDto obj) throws SQLException {
         PreparedStatement pst = null;
@@ -61,14 +67,13 @@ public class VehicleTypeGateway extends AbstractGateway implements Gateway<Vehic
     @Override
     public List<VehicleTypeDto> findAll() throws SQLException {
         PreparedStatement pst = null;
-        ResultSet rs = null;
         List<VehicleTypeDto> vts = null;
 
         pst = this.conn.prepareStatement(Conf.getInstance().getProperty(
                 "SQL_LIST_VEHICLETYPES"));
         vts = resultSetToList(pst.executeQuery());
 
-        Jdbc.close(rs, pst);
+        Jdbc.close(pst);
 
 
         return vts;
@@ -78,7 +83,7 @@ public class VehicleTypeGateway extends AbstractGateway implements Gateway<Vehic
         List<VehicleTypeDto> vts = new ArrayList<VehicleTypeDto>();
         while (rs.next())
             vts.add(resultSetToVehicleType(rs));
-
+        rs.close();
         return vts;
     }
 
