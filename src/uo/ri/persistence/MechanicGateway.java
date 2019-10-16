@@ -25,9 +25,7 @@ public class MechanicGateway extends AbstractGateway implements Gateway<Mechanic
 
         pst = this.conn.prepareStatement(Conf.getInstance().getProperty("SQL_ADD_MECHANIC"));
 
-        pst.setString(1, mechanic.dni);
-        pst.setString(2, mechanic.name);
-        pst.setString(3, mechanic.surname);
+        configurePStatement(pst, mechanic);
 
         pst.executeUpdate();
 
@@ -57,9 +55,7 @@ public class MechanicGateway extends AbstractGateway implements Gateway<Mechanic
         pst = this.conn.prepareStatement(Conf.getInstance().getProperty("SQL_UPDATE_MECHANIC"));
 
 
-        pst.setString(1, mechanic.dni);
-        pst.setString(2, mechanic.name);
-        pst.setString(3, mechanic.surname);
+        configurePStatement(pst, mechanic);
 
         pst.setLong(4, mechanic.id);
 
@@ -72,13 +68,12 @@ public class MechanicGateway extends AbstractGateway implements Gateway<Mechanic
     @Override
     public List<MechanicDto> findAll() throws SQLException {
         PreparedStatement pst = null;
-        ResultSet rs = null;
         List<MechanicDto> mechanics = null;
 
         pst = this.conn.prepareStatement(Conf.getInstance().getProperty("SQL_LIST_MECHANICS"));
         mechanics = resultSetToList(pst.executeQuery());
 
-        Jdbc.close(rs, pst);
+        Jdbc.close(pst);
 
 
         return mechanics;
@@ -165,11 +160,18 @@ public class MechanicGateway extends AbstractGateway implements Gateway<Mechanic
      * }
      */
 
+    private void configurePStatement(PreparedStatement pst, MechanicDto obj) throws SQLException {
+        pst.setString(1, obj.dni);
+        pst.setString(2, obj.name);
+        pst.setString(3, obj.surname);
+    }
+
     private List<MechanicDto> resultSetToList(ResultSet rs) throws SQLException {
         List<MechanicDto> mechanics = new ArrayList<MechanicDto>();
 
         while (rs.next())
             mechanics.add(resultSetToMechanic(rs));
+        rs.close();
 
         return mechanics;
     }

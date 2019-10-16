@@ -5,6 +5,7 @@ import uo.ri.business.dto.InvoiceDto;
 import uo.ri.common.Conf;
 import uo.ri.common.Util;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -12,6 +13,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class InvoiceGateway extends AbstractGateway implements Gateway<InvoiceDto> {
+
+    public InvoiceGateway(Connection conn) {
+        super(conn);
+    }
 
     @Override
     public void add(InvoiceDto obj) throws SQLException {
@@ -85,6 +90,7 @@ public class InvoiceGateway extends AbstractGateway implements Gateway<InvoiceDt
 
         while (rs.next())
             is.add(resultSetToInvoice(rs));
+        rs.close();
 
         return is;
     }

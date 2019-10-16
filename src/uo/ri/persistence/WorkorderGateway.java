@@ -1,7 +1,6 @@
 package uo.ri.persistence;
 
 import alb.util.jdbc.Jdbc;
-import uo.ri.business.dto.MechanicDto;
 import uo.ri.business.dto.WorkOrderDto;
 import uo.ri.common.Conf;
 import uo.ri.common.Util;
@@ -102,11 +101,10 @@ public class WorkorderGateway extends AbstractGateway implements Gateway<WorkOrd
     private List<WorkOrderDto> resultSetToList(ResultSet rs) throws SQLException {
         List<WorkOrderDto> workorders = new ArrayList<WorkOrderDto>();
 
-        while (rs.next()) {
-            WorkOrderDto mec = resultSetToWorkoder(rs);
+        while (rs.next())
+            workorders.add(resultSetToWorkoder(rs));
 
-            workorders.add(mec);
-        }
+        rs.close();
 
         return workorders;
     }

@@ -4,6 +4,7 @@ import alb.util.jdbc.Jdbc;
 import uo.ri.business.dto.VehicleDto;
 import uo.ri.common.Conf;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -11,6 +12,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class VehicleGateway extends AbstractGateway implements Gateway<VehicleDto> {
+
+    public VehicleGateway(Connection conn) {
+        super(conn);
+    }
 
     @Override
     public void add(VehicleDto obj) throws SQLException {
@@ -60,7 +65,6 @@ public class VehicleGateway extends AbstractGateway implements Gateway<VehicleDt
     @Override
     public List<VehicleDto> findAll() throws SQLException {
         PreparedStatement pst = null;
-        ResultSet rs = null;
         List<VehicleDto> vs = null;
 
         pst = this.conn.prepareStatement(Conf.getInstance().getProperty(
@@ -85,6 +89,7 @@ public class VehicleGateway extends AbstractGateway implements Gateway<VehicleDt
         List<VehicleDto> vs = new ArrayList<VehicleDto>();
         while (rs.next())
             vs.add(resultSetToVehicle(rs));
+        rs.close();
         return vs;
     }
 
