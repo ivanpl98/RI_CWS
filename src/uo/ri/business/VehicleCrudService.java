@@ -1,9 +1,8 @@
 package uo.ri.business;
 
-import java.util.Optional;
+import uo.ri.business.dto.VehicleDto;
+import uo.ri.business.exception.BusinessException;
 
-import uo.ri.cws.application.dto.VehicleDto;
-import uo.ri.cws.application.service.BusinessException;
 
 /**
  * This service is intended to be used by the Foreman
@@ -11,12 +10,11 @@ import uo.ri.cws.application.service.BusinessException;
  */
 public interface VehicleCrudService {
 
-	/**
-	 * @param plate number
-	 * @return an Optional with the vehicle dto specified be the plate number
-	 * 
-	 * @throws BusinessException, DOES NOT 
-	 */
-	VehicleDto findVehicleByPlate(String plate) throws BusinessException;
-	
+    /**
+     * @param plate number
+     * @return an Optional with the vehicle dto specified be the plate number
+     * @throws BusinessException, DOES NOT
+     */
+    VehicleDto findVehicleByPlate(String plate) throws BusinessException;
+
 }

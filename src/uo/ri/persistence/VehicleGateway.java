@@ -1,0 +1,103 @@
+package uo.ri.persistence;
+
+import alb.util.jdbc.Jdbc;
+import uo.ri.business.dto.VehicleDto;
+import uo.ri.common.Conf;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+public class VehicleGateway extends AbstractGateway implements Gateway<VehicleDto> {
+
+    @Override
+    public void add(VehicleDto obj) throws SQLException {
+        PreparedStatement pst = null;
+
+        pst = this.conn.prepareStatement(Conf.getInstance().getProperty(
+                "SQL_ADD_VEHICLE"));
+
+        configurePStatement(pst, obj);
+
+        pst.executeUpdate();
+
+        Jdbc.close(pst);
+    }
+
+    @Override
+    public void delete(Long id) throws SQLException {
+        PreparedStatement pst = null;
+
+        pst = this.conn.prepareStatement(Conf.getInstance().getProperty(
+                "SQL_DELETE_VEHICLE"));
+
+        pst.setLong(1, id);
+
+        pst.executeUpdate();
+
+        Jdbc.close(pst);
+    }
+
+    @Override
+    public void update(VehicleDto obj) throws SQLException {
+
+        PreparedStatement pst = null;
+
+        pst = this.conn.prepareStatement(Conf.getInstance().getProperty(
+                "SQL_UPDATE_VEHICLE"));
+
+        configurePStatement(pst, obj);
+        pst.setLong(6, obj.id);
+
+        pst.executeUpdate();
+
+        Jdbc.close(pst);
+
+    }
+
+    @Override
+    public List<VehicleDto> findAll() throws SQLException {
+        PreparedStatement pst = null;
+        ResultSet rs = null;
+        List<VehicleDto> vs = null;
+
+        pst = this.conn.prepareStatement(Conf.getInstance().getProperty(
+                "SQL_LIST_VEHICLES"));
+        vs = resultSetToList(pst.executeQuery());
+
+        Jdbc.close(pst);
+
+        return vs;
+    }
+
+    private void configurePStatement(PreparedStatement pst,
+                                     VehicleDto obj) throws SQLException {
+        pst.setString(1, obj.plate);
+        pst.setString(2, obj.make);
+        pst.setString(3, obj.model);
+        pst.setLong(4, obj.clientId);
+        pst.setLong(5, obj.vehicleTypeId);
+    }
+
+    private List<VehicleDto> resultSetToList(ResultSet rs) throws SQLException {
+        List<VehicleDto> vs = new ArrayList<VehicleDto>();
+        while (rs.next())
+            vs.add(resultSetToVehicle(rs));
+        return vs;
+    }
+
+    private VehicleDto resultSetToVehicle(ResultSet rs) throws SQLException {
+        VehicleDto v = new VehicleDto();
+
+        v.id = rs.getLong("id");
+        v.plate = rs.getString("plateNumber");
+        v.make = rs.getString("make");
+        v.model = rs.getString("model");
+        v.clientId = rs.getLong("client_id");
+        v.vehicleTypeId = rs.getLong("vehicleType_id");
+
+        return v;
+    }
+}

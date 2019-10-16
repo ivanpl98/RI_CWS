@@ -168,11 +168,8 @@ public class MechanicGateway extends AbstractGateway implements Gateway<Mechanic
     private List<MechanicDto> resultSetToList(ResultSet rs) throws SQLException {
         List<MechanicDto> mechanics = new ArrayList<MechanicDto>();
 
-        while (rs.next()) {
-            MechanicDto mec = resultSetToMechanic(rs);
-
-            mechanics.add(mec);
-        }
+        while (rs.next())
+            mechanics.add(resultSetToMechanic(rs));
 
         return mechanics;
     }
